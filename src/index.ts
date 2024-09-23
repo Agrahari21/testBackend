@@ -20,11 +20,13 @@ var corOptions = {
     "http://192.168.75.118:8000",
     "http://10.0.2.15",
     "http://193.203.184.29:8000",
+    "http://216.24.57.252:8000",
+    "https://216.24.57.252:8000",
   ],
 };
 
-app.use(cors({ origin: "*" }));
-//app.use(cors(corOptions));
+//app.use(cors({ origin: "*" }));
+app.use(cors(corOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
