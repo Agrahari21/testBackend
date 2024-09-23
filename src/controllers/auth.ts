@@ -60,13 +60,13 @@ export const verifyEmail: RequestHandler = async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 export const signIn: RequestHandler = async (req, res) => {
   const { email, password } = req.body;
-  // console.log("signin called");
+   console.log("signin called");
   // await User.sync({ alter: true });
 
   const user1 = await User.findOne({
     where: { email: email, isVerified: false },
   });
-  //console.log("user1=>", user1);
+  console.log("user1=>", user1);
   if (user1) {
     return sendErrorRes(
       res,
