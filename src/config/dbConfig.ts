@@ -28,11 +28,11 @@ type dLect = Dialect;
 //u302726401_ubuntu
 
 let db: string = process.env.DB_NAME || "fooddb1";
-let dbType: dLect = "mariadb" || "mysql";
+//let dbType: dLect = "mariadb" || "mysql";
 
 const sequelize = new Sequelize({
   database: db,
-  dialect: dbType,
+  dialect: "mariadb",
   username: process.env.DB_USER || "ubuntu",
   password: process.env.DB_PASS || "Ubuntu@101",
   host: process.env.DB_HOST || "127.0.0.1",
