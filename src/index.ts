@@ -23,8 +23,8 @@ var corOptions = {
   ],
 };
 
-//app.use(cors({ origin: "*" }));
-app.use(cors(corOptions));
+app.use(cors({ origin: "*" }));
+//app.use(cors(corOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
