@@ -112,6 +112,82 @@ export const saveFoodData: RequestHandler = async (req, res) => {
 };
 
 ////////////////////////////////////////////////////////////////////
+export const updateFoodData: RequestHandler = async (req, res) => {
+  //const { email } = req.user;
+  const {
+    selDate,
+    email,
+    nYear,
+    nWeek,
+    nDay,
+    pBreakfast,
+    pLunch,
+    pSnack,
+    pDinner,
+  } = req.body;
+  //console.log("nWeek", nWeek);
+
+  // console.log("nYear", nYear);
+  // console.log("nDay", nDay);
+  //  console.log("selDate", selDate);
+
+  await FoodTransaction.sync({ alter: true });
+
+  const res1: FoodTransaction | null = await FoodTransaction.findOne({
+    where: { nYear: nYear, nWeek: nWeek, nDay: nDay, email: email },
+  });
+
+  if (res1) {
+    const response = await FoodTransaction.update(
+      {
+        pBreakfast: pBreakfast,
+        pLunch: pLunch,
+        pSnack: pSnack,
+        pDinner: pDinner,
+      },
+      {
+        where: {
+          email: email,
+          // selectedDate: selDate,
+          nYear: nYear,
+          nWeek: nWeek,
+          nDay: nDay,
+        },
+      }
+    );
+    if (response) res.json({ message: "Updated Successfully!" });
+    else res.json({ message: "Error in updating!" });
+  } else {
+    res
+      .status(422)
+      .json({ message: "Record does not exist for selected date" });
+  }
+};
+
+////////////////////////////////////////////////////////////////////
+export const deleteFoodData: RequestHandler = async (req, res) => {
+  //const { email } = req.user;
+  const { email, nYear, nWeek, nDay } = req.body;
+  //console.log("nWeek", nWeek);
+
+  // console.log("nYear", nYear);
+  // console.log("nDay", nDay);
+  //  console.log("selDate", selDate);
+
+  await FoodTransaction.sync({ alter: true });
+
+  const res1 = await FoodTransaction.destroy({
+    where: { nYear: nYear, nWeek: nWeek, nDay: nDay, email: email },
+  });
+
+  if (res1) {
+    res.json({ message: "Deleted Sucessfully! " });
+  } else {
+    res.status(422).json({ message: "Record exist for selected date" });
+  }
+};
+
+////////////////////////////////////////////////////////////////////
 export const getFoodDatalist: RequestHandler = async (req, res) => {
   const { email, year, week } = req.params;
 
