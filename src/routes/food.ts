@@ -18,6 +18,8 @@ foodRouter.get("/lUnch", getLunchList);
 foodRouter.get("/sNack", getSnackList);
 foodRouter.get("/dInner", getDinnerList);
 foodRouter.post("/saveDayList", saveFoodData);
+foodRouter.patch("/updateDayList", updateFoodData);
+foodRouter.delete("/deleteDayList", deleteFoodData);
 foodRouter.get("/getFoodData/:email/:year/:week", getFoodDatalist);
 foodRouter.get("/getMaxWeek/:email/:year", getMaxWeekOfYear);
 foodRouter.post("/aDdFoodItem", isAuth, addFoodItem);
