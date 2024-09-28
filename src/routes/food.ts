@@ -8,6 +8,8 @@ import {
   getFoodDatalist,
   getMaxWeekOfYear,
   addFoodItem,
+  updateFoodData,
+  deleteFoodData,
 } from "../controllers/food";
 import { isAuth } from "src/middleware/auth";
 
