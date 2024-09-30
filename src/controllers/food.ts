@@ -16,6 +16,7 @@ export const getBreakfastList: RequestHandler = async (req, res) => {
 
   const breakfastList = await Breakfast.findAll({
     attributes: ["itemName", "itemValue"],
+     order: ["itemValue"],
   });
   // console.log("breakfastList", breakfastList);
 
@@ -30,6 +31,7 @@ export const getLunchList: RequestHandler = async (req, res) => {
 
   const lunchList = await Lunch.findAll({
     attributes: ["itemName", "itemValue"],
+     order: ["itemValue"],
   });
   // console.log("lunchList", lunchList);
 
@@ -44,6 +46,7 @@ export const getSnackList: RequestHandler = async (req, res) => {
 
   const snackList = await Snack.findAll({
     attributes: ["itemName", "itemValue"],
+     order: ["itemValue"],
   });
   //  console.log("snackList", snackList);
   res.send(snackList);
@@ -57,6 +60,7 @@ export const getDinnerList: RequestHandler = async (req, res) => {
 
   const dinnerList = await Dinner.findAll({
     attributes: ["itemName", "itemValue"],
+     order: ["itemValue"],
   });
   // console.log("dinnerList", dinnerList);
   res.send(dinnerList);
