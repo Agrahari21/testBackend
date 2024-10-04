@@ -6,6 +6,7 @@ import {
   generateVerificationLink,
   grantAccessToken,
   grantValid,
+  resendVerificationLink,
   saveProfile,
   sendProfile,
   signIn,
@@ -26,6 +27,11 @@ const authRouter = Router();
 
 authRouter.post("/sign-up", validate(newUserSchema), createNewUser);
 authRouter.post("/verify", validate(verifyTokenSchema), verifyEmail);
+authRouter.post(
+  "/re-verify",
+  // validate(verifyTokenSchema),
+  resendVerificationLink
+);
 authRouter.get("/verify-token", isAuth, generateVerificationLink);
 authRouter.post("/sign-in", signIn);
 authRouter.get("/profile", isAuth, sendProfile);
@@ -33,7 +39,7 @@ authRouter.post("/saveBaseProfile", saveProfile);
 authRouter.post("/refresh-token", grantAccessToken);
 authRouter.post("/sign-out", isAuth, signOut);
 authRouter.post("/forget-pass", generateForgetPassLink);
-authRouter.post("/saveBaseProfile", saveProfile);
+authRouter.post("/saveBaseProfile", isAuth, saveProfile);
 authRouter.post(
   "/verify-pass-reset-token",
   validate(verifyTokenSchema),
