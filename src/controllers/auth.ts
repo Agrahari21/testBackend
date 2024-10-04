@@ -14,13 +14,30 @@ const VERIFICATION_LINK = process.env.VERIFICATION_LINK!;
 const JWT_SECRET = process.env.JWT_SECRET!;
 const PASSWORD_RESET_LINK = process.env.PASSWORD_RESET_LINK!;
 
-export const createNewUser: RequestHandler = async (req, res) => {
-  const { name, email, password } = req.body;
-  console.log("inside", email);
+export const resendVerificationLink: RequestHandler = async (req, res) => {
+  const { email } = req.body;
+
   await User.sync({ alter: true });
   const user = await User.findOne({ where: { email: email } });
+  if (user) {
+    await AuthVerifyToken.sync({ alter: true });
 
-  console.log("inside", user);
+    const token = crypto.randomBytes(36).toString("hex");
+    await AuthVerifyToken.create({ owner: user.id, token, email });
+    //send Verification url with token to register email
+    const link = `${VERIFICATION_LINK}?id=${user.id}&token=${token}`;
+
+    await mail.sendVerification(user.email, link);
+
+    return res.json({ message: "Please check your inbox" });
+  }
+};
+
+export const createNewUser: RequestHandler = async (req, res) => {
+  const { name, email, password } = req.body;
+
+  await User.sync({ alter: true });
+  const user = await User.findOne({ where: { email: email } });
 
   if (user)
     return sendErrorRes(
@@ -30,14 +47,13 @@ export const createNewUser: RequestHandler = async (req, res) => {
     );
   const users = await User.create(req.body);
 
-  //Generate and Store verification token
   await AuthVerifyToken.sync({ alter: true });
 
   const token = crypto.randomBytes(36).toString("hex");
-  await AuthVerifyToken.create({ owner: users.id, token });
+  await AuthVerifyToken.create({ owner: users.id, token, email });
   //send Verification url with token to register email
   const link = `${VERIFICATION_LINK}?id=${users.id}&token=${token}`;
-  // console.log("VERIFICATION_LINK", link);
+
   await mail.sendVerification(users.email, link);
 
   return res.json({ message: "Please check your inbox" });
@@ -60,19 +76,27 @@ export const verifyEmail: RequestHandler = async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 export const signIn: RequestHandler = async (req, res) => {
   const { email, password } = req.body;
-   console.log("signin called");
-   await User.sync({ alter: true });
 
   const user1 = await User.findOne({
     where: { email: email, isVerified: false },
   });
-  console.log("user1=>", user1);
+
   if (user1) {
-    return sendErrorRes(
+    /* return sendErrorRes(
       res,
       "Please check inbox and verify your account!",
       403
-    );
+    ); */
+
+    res.json({
+      profile: {
+        id: user1.id,
+        email: user1.email,
+        name: user1.name,
+        verified: user1.isVerified,
+      },
+    });
+    return;
   }
 
   const user = await User.findOne({
@@ -82,7 +106,7 @@ export const signIn: RequestHandler = async (req, res) => {
 
   const isMatched = await user.comparePassword(password);
   if (!isMatched) return sendErrorRes(res, "Email/Password mismatch", 403);
-  //console.log("isMatched=>", isMatched);
+
   const payload = { id: user.id };
   const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
   const refreshToken = jwt.sign(payload, JWT_SECRET);
@@ -239,20 +263,30 @@ export const updateProfile: RequestHandler = async (req, res) => {
 
 ////////////////////////////////////////////////////////////////////
 export const saveProfile: RequestHandler = async (req, res) => {
-  const { name, address, phone, goal, dob } = req.body;
+  const { name, email, address, phone, goal, dob } = req.body;
 
   if (typeof name !== "string" || name.trim().length < 3) {
     return sendErrorRes(res, "Invalid name!", 422);
   }
 
   await Profile.sync({ alter: true });
+  await User.sync({ alter: true });
 
-  await Profile.create({
-    profileName: name,
-    address: address,
-    phone: phone,
-    goal: goal,
-    dob: dob,
+  const profileExist = await Profile.findOne({
+    where: { email: email, profileName: name },
   });
-  res.json({ message: "Profile Saved!" });
+
+  if (!profileExist) {
+    await Profile.create({
+      profileName: name,
+      email: email,
+      address: address,
+      phone: phone,
+      goal: goal,
+      dob: dob,
+    });
+    res.json({ message: "Profile Saved!" });
+  } else {
+    return sendErrorRes(res, "Profile already exist with this Name!!", 403);
+  }
 };
