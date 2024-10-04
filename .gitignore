@@ -15,4 +15,4 @@ npm-debug.log
 .vscode/
 dist/
 .env
-src/config/dbConfig.ts
+#src/config/dbConfig.ts
