@@ -81,7 +81,7 @@ export const signIn: RequestHandler = async (req, res) => {
   const user1 = await User.findOne({
     where: { email: email, isVerified: false },
   });
-  console.log("user1==>", user1);
+ // console.log("user1==>", user1);
   if (user1) {
     /* return sendErrorRes(
       res,
@@ -104,7 +104,7 @@ export const signIn: RequestHandler = async (req, res) => {
     where: { email: email, isVerified: true },
   });
 
-  console.log("user==>", user);
+ // console.log("user==>", user);
   if (!user)
     return sendErrorRes(
       res,
