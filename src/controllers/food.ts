@@ -16,9 +16,8 @@ export const getBreakfastList: RequestHandler = async (req, res) => {
 
   const breakfastList = await Breakfast.findAll({
     attributes: ["itemName", "itemValue"],
-     order: ["itemValue"],
+    order: ["itemValue"],
   });
-  // console.log("breakfastList", breakfastList);
 
   res.send(breakfastList);
 };
@@ -31,9 +30,8 @@ export const getLunchList: RequestHandler = async (req, res) => {
 
   const lunchList = await Lunch.findAll({
     attributes: ["itemName", "itemValue"],
-     order: ["itemValue"],
+    order: ["itemValue"],
   });
-  // console.log("lunchList", lunchList);
 
   res.send(lunchList);
 };
@@ -46,9 +44,9 @@ export const getSnackList: RequestHandler = async (req, res) => {
 
   const snackList = await Snack.findAll({
     attributes: ["itemName", "itemValue"],
-     order: ["itemValue"],
+    order: ["itemValue"],
   });
-  //  console.log("snackList", snackList);
+
   res.send(snackList);
 };
 
@@ -60,9 +58,9 @@ export const getDinnerList: RequestHandler = async (req, res) => {
 
   const dinnerList = await Dinner.findAll({
     attributes: ["itemName", "itemValue"],
-     order: ["itemValue"],
+    order: ["itemValue"],
   });
-  // console.log("dinnerList", dinnerList);
+
   res.send(dinnerList);
 };
 
@@ -80,11 +78,6 @@ export const saveFoodData: RequestHandler = async (req, res) => {
     pSnack,
     pDinner,
   } = req.body;
-  //console.log("nWeek", nWeek);
-
-  // console.log("nYear", nYear);
-  // console.log("nDay", nDay);
-  //  console.log("selDate", selDate);
 
   await FoodTransaction.sync({ alter: true });
 
@@ -110,7 +103,7 @@ export const saveFoodData: RequestHandler = async (req, res) => {
     if (response) {
       res.json({ message: "Saved sucessfully! " });
     } else {
-      res.json({ message: "Error in updation" });
+      res.json({ message: "Error in saving" });
     }
   }
 };
@@ -129,11 +122,6 @@ export const updateFoodData: RequestHandler = async (req, res) => {
     pSnack,
     pDinner,
   } = req.body;
-  //console.log("nWeek", nWeek);
-
-  // console.log("nYear", nYear);
-  // console.log("nDay", nDay);
-  //  console.log("selDate", selDate);
 
   await FoodTransaction.sync({ alter: true });
 
@@ -170,13 +158,7 @@ export const updateFoodData: RequestHandler = async (req, res) => {
 
 ////////////////////////////////////////////////////////////////////
 export const deleteFoodData: RequestHandler = async (req, res) => {
-  //const { email } = req.user;
   const { email, nYear, nWeek, nDay } = req.body;
-  //console.log("nWeek", nWeek);
-
-  // console.log("nYear", nYear);
-  // console.log("nDay", nDay);
-  //  console.log("selDate", selDate);
 
   await FoodTransaction.sync({ alter: true });
 
@@ -195,10 +177,6 @@ export const deleteFoodData: RequestHandler = async (req, res) => {
 export const getFoodDatalist: RequestHandler = async (req, res) => {
   const { email, year, week } = req.params;
 
-  // console.log("email", email);
-  // console.log("year", year);
-  //  console.log("week", week);
-
   const { QueryTypes } = require("sequelize");
 
   const result = await sequelize.query(
@@ -209,15 +187,12 @@ export const getFoodDatalist: RequestHandler = async (req, res) => {
     }
   );
 
-  // console.log("result", result);
   res.json({ data: result });
 };
 
 ////////////////////////////////////////////////////////////////////
 export const getMaxWeekOfYear: RequestHandler = async (req, res) => {
   const { email, year } = req.params;
-
-  // console.log("email", email);
 
   await FoodTransaction.sync();
 
@@ -237,7 +212,7 @@ export const getMaxWeekOfYear: RequestHandler = async (req, res) => {
   let maxWeek: number = 0;
   if (result) {
     maxWeek = result[0]?.maxWeek;
-    // console.log("result", maxWeek);
+
     res.json({ maxWeek: maxWeek });
   } else {
     res.json({ maxWeek: null });
@@ -249,16 +224,7 @@ export const addFoodItem: RequestHandler = async (req, res) => {
   //const { email } = req.user;
   const { itemName, foodCategory, foodType, userType, isDinner, isSnack } =
     req.body.newFoodInfo;
-  /* console.log("itemName", itemName);
-  console.log("foodCategory", foodCategory);
-  console.log("foodType", foodType);
-  console.log("userType", userType);
-  console.log("isDinner", isDinner);
-  console.log("isSnack", isSnack); */
 
-  /* const exist = await Lunch.findOne({
-    where: { itemName: itemName },
-  }); */
   await Dinner.sync({ alter: true });
   await Breakfast.sync({ alter: true });
   await Snack.sync({ alter: true });
@@ -273,10 +239,11 @@ export const addFoodItem: RequestHandler = async (req, res) => {
   );
 
   // console.log("exist=>", exist);
-
-  if (exist[0].count === 1) {
-    res.json({ message: "Item Already exist, use other name" });
-    return;
+  if (exist[0]) {
+    if (exist[0].count === 1) {
+      res.json({ message: "Item Already exist, use other name" });
+      return;
+    }
   }
 
   if (exist[0].count === 0) {
