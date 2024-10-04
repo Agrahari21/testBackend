@@ -6,10 +6,14 @@ import {
   CreatedAt,
   UpdatedAt,
   BeforeCreate,
+  HasOne,
   HasMany,
+  BelongsTo,
+  BelongsToMany,
+  ForeignKey,
 } from "sequelize-typescript";
 import Profile from "./Profile";
-import { HasOne } from "sequelize";
+//import { HasOne } from "sequelize";
 import AuthVerifyToken from "./AuthVerifyToken";
 import { hash, compare, genSalt } from "bcrypt";
 
@@ -20,26 +24,23 @@ import { hash, compare, genSalt } from "bcrypt";
 })
 class User extends Model {
   @Column({
-    primaryKey: true,
+    //primaryKey: true,
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
   })
   declare id: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
+  @Column
   declare name: string;
 
   @Column({
     type: DataType.STRING,
-    unique: true,
+    //unique: true,
+    primaryKey: true,
   })
   declare email: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
+  @Column
   declare password: string;
 
   @Column({
@@ -48,25 +49,14 @@ class User extends Model {
   })
   declare isVerified: boolean;
 
-  @Column({
-    type: DataType.STRING,
-  })
-  declare slug: string;
-
-  @Column({
-    type: DataType.STRING,
-  })
+  @Column
   declare tokens: string;
 
-  @CreatedAt
-  declare created_at: Date;
-
-  @UpdatedAt
-  declare updated_at: Date;
-
-  /* @HasMany(() => Profile)
-  declare profiles: Profile[]; */
-
+  @HasOne(() => AuthVerifyToken)
+  // @BelongsTo(() => User)
+  @HasMany(() => Profile)
+  //declare profiles: Profile[];
+  // @BelongsToMany(() => User)
   @BeforeCreate
   static async generatePasswd(instance: User) {
     const salt = await genSalt(10);
