@@ -6,6 +6,8 @@ import {
   CreatedAt,
   UpdatedAt,
   ForeignKey,
+  BelongsTo,
+  AllowNull,
 } from "sequelize-typescript";
 
 import User from "./User";
@@ -16,37 +18,26 @@ import User from "./User";
   modelName: "Profile",
 })
 class Profile extends Model {
-  @Column({
-    primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
-  })
-  declare id: string;
-
-  /* @ForeignKey(() => User)
-  @Column({
-    type: DataType.UUID,
-  })
-  declare user_id: string; */
-
-  @Column({
-    type: DataType.STRING,
-  })
+  @Column
   declare profileName: string;
 
+  @ForeignKey(() => User)
+  // @BelongsTo(() => User)
   @Column({
-    type: DataType.STRING,
+    allowNull: false,
   })
+  declare email: string;
+
+  @BelongsTo(() => User)
+  declare user: User;
+
+  @Column
   declare address: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
+  @Column
   declare goal: string;
 
-  @Column({
-    type: DataType.STRING,
-  })
+  @Column
   declare phone: string;
 
   @Column({
@@ -55,15 +46,9 @@ class Profile extends Model {
   declare dob: Date;
 
   @Column({
-    type: DataType.DATEONLY,
+    defaultValue: new Date(),
   })
   declare starting_date: Date;
-
-  @CreatedAt
-  declare created_at: Date;
-
-  @UpdatedAt
-  declare updated_at: Date;
 }
 
 export default Profile;
