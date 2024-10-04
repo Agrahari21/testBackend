@@ -14,34 +14,31 @@ import User from "./User";
 import { compare, genSalt, hash } from "bcrypt";
 
 @Table({
-  //timestamps: true,
+  timestamps: true,
   tableName: "authverifytokens",
   modelName: "AuthVerifyToken",
 })
 class AuthVerifyToken extends Model {
-  @Column({
-    primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
-  })
-  declare id: string;
-
-  @Column({
-    type: DataType.UUID,
-  })
-  declare owner: string;
   @ForeignKey(() => User)
   @Column({
     type: DataType.STRING,
+    unique: true,
     allowNull: false,
   })
-  declare token: string;
+  declare email: string;
+
+  @BelongsTo(() => User)
+  declare user: User;
 
   @Column({
-    type: DataType.DATE,
-    defaultValue: new Date(),
+    type: DataType.UUID,
+    // unique: true,
+    allowNull: false,
   })
-  declare created_at: Date;
+  declare owner: string;
+
+  @Column
+  declare token: string;
 
   @BeforeCreate
   static async generateToken(instance: AuthVerifyToken) {
