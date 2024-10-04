@@ -21,6 +21,7 @@ export const resendVerificationLink: RequestHandler = async (req, res) => {
   const user = await User.findOne({ where: { email: email } });
   if (user) {
     await AuthVerifyToken.sync({ alter: true });
+    await AuthVerifyToken.destroy({ where: { email: email } });
 
     const token = crypto.randomBytes(36).toString("hex");
     await AuthVerifyToken.create({ owner: user.id, token, email });
@@ -80,7 +81,7 @@ export const signIn: RequestHandler = async (req, res) => {
   const user1 = await User.findOne({
     where: { email: email, isVerified: false },
   });
-
+  console.log("user1==>", user1);
   if (user1) {
     /* return sendErrorRes(
       res,
@@ -102,7 +103,14 @@ export const signIn: RequestHandler = async (req, res) => {
   const user = await User.findOne({
     where: { email: email, isVerified: true },
   });
-  if (!user) return sendErrorRes(res, "Email/Password mismatch", 403);
+
+  console.log("user==>", user);
+  if (!user)
+    return sendErrorRes(
+      res,
+      "Account not exist! click 'Sign Up' to register",
+      403
+    );
 
   const isMatched = await user.comparePassword(password);
   if (!isMatched) return sendErrorRes(res, "Email/Password mismatch", 403);
