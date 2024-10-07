@@ -6,12 +6,12 @@ import { Table, Column, Model, DataType } from "sequelize-typescript";
   modelName: "Dinner",
 })
 class Dinner extends Model {
-  @Column({
+  /*  @Column({
     primaryKey: true,
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
   })
-  declare id: string;
+  declare id: string; */
 
   @Column({
     type: DataType.STRING,
