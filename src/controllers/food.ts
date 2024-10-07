@@ -225,6 +225,10 @@ export const addFoodItem: RequestHandler = async (req, res) => {
   const { itemName, foodCategory, foodType, userType, isDinner, isSnack } =
     req.body.newFoodInfo;
 
+  const email = req.user.email;
+
+  console.log("email", email);
+
   await Dinner.sync({ alter: true });
   await Breakfast.sync({ alter: true });
   await Snack.sync({ alter: true });
@@ -249,9 +253,9 @@ export const addFoodItem: RequestHandler = async (req, res) => {
   if (exist[0].count === 0) {
     let myuuid = uuidv4();
     const response = await sequelize.query(
-      `INSERT into ${process.env.DB_NAME}.${foodCategory}master (id, itemName,itemValue,userType,foodType ) VALUES (?, ?, ?, ?, ?)`,
+      `INSERT into ${process.env.DB_NAME}.${foodCategory}master ( itemName,itemValue,userType,foodType, email ) VALUES ( ?, ?, ?, ?, ?)`,
       {
-        replacements: [myuuid, itemName, itemName, userType, foodType],
+        replacements: [itemName, itemName, userType, foodType, email],
         type: QueryTypes.INSERT,
       }
     );
@@ -261,9 +265,9 @@ export const addFoodItem: RequestHandler = async (req, res) => {
         const response1 = await sequelize.query(
           `INSERT into ${process.env.DB_NAME}.${
             isDinner ? "dinner" : "snack"
-          }master (id, itemName,itemValue,userType,foodType ) VALUES (?, ?, ?, ?, ?)`,
+          }master ( itemName,itemValue,userType,foodType ) VALUES (?, ?, ?, ?)`,
           {
-            replacements: [myuuid, itemName, itemName, userType, foodType],
+            replacements: [itemName, itemName, userType, foodType],
             type: QueryTypes.INSERT,
           }
         );
