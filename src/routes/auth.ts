@@ -4,6 +4,7 @@ import {
   createNewUser,
   generateForgetPassLink,
   generateVerificationLink,
+  getBaseProfile,
   grantAccessToken,
   grantValid,
   resendVerificationLink,
@@ -36,6 +37,7 @@ authRouter.get("/verify-token", isAuth, generateVerificationLink);
 authRouter.post("/sign-in", signIn);
 authRouter.get("/profile", isAuth, sendProfile);
 authRouter.post("/saveBaseProfile", saveProfile);
+authRouter.get("/baseProfile/:email", getBaseProfile);
 authRouter.post("/refresh-token", grantAccessToken);
 authRouter.post("/sign-out", isAuth, signOut);
 authRouter.post("/forget-pass", generateForgetPassLink);
