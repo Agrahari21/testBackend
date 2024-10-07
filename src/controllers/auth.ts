@@ -81,7 +81,7 @@ export const signIn: RequestHandler = async (req, res) => {
   const user1 = await User.findOne({
     where: { email: email, isVerified: false },
   });
- // console.log("user1==>", user1);
+  //console.log("user1==>", user1);
   if (user1) {
     /* return sendErrorRes(
       res,
@@ -104,7 +104,7 @@ export const signIn: RequestHandler = async (req, res) => {
     where: { email: email, isVerified: true },
   });
 
- // console.log("user==>", user);
+  //console.log("user==>", user);
   if (!user)
     return sendErrorRes(
       res,
@@ -281,20 +281,52 @@ export const saveProfile: RequestHandler = async (req, res) => {
   await User.sync({ alter: true });
 
   const profileExist = await Profile.findOne({
-    where: { email: email, profileName: name },
+    where: { email: email }, // profileName: name
   });
 
-  if (!profileExist) {
-    await Profile.create({
-      profileName: name,
-      email: email,
-      address: address,
-      phone: phone,
-      goal: goal,
-      dob: dob,
-    });
-    res.json({ message: "Profile Saved!" });
+  if (profileExist) {
+    await Profile.destroy({ where: { email: email, profileName: name } });
+  }
+
+  const newProfile = await Profile.create({
+    profileName: name,
+    email: email,
+    address: address,
+    phone: phone,
+    goal: goal,
+    dob: dob,
+  });
+
+  if (newProfile) {
+    res.json({ message: profileExist ? "Profile Updated" : "Profile Saved!" });
   } else {
-    return sendErrorRes(res, "Profile already exist with this Name!!", 403);
+    return sendErrorRes(res, "Profile could not be saved!!", 403);
+  }
+};
+////////////////////////////////////////////////////////////////////
+export const getBaseProfile: RequestHandler = async (req, res) => {
+  const { email } = req.params;
+
+  // console.log("email", email);
+  if (!email) {
+    return sendErrorRes(res, "Invalid Account!", 422);
+  }
+  await Profile.sync({ alter: true });
+  const profileExist = await Profile.findOne({
+    where: { email: email },
+  });
+  // console.log("profileExist", profileExist);
+  if (profileExist) {
+    res.json({
+      profile: {
+        name: profileExist.profileName,
+        address: profileExist.address,
+        phone: profileExist.phone,
+        goal: profileExist.goal,
+      },
+      dob: profileExist.dob,
+    });
+  } else {
+    return;
   }
 };
