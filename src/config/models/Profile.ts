@@ -16,6 +16,7 @@ import User from "./User";
   timestamps: true,
   tableName: "profiles",
   modelName: "Profile",
+  paranoid: true,
 })
 class Profile extends Model {
   @Column
