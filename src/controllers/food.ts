@@ -86,7 +86,7 @@ export const saveFoodData: RequestHandler = async (req, res) => {
   });
 
   if (res1) {
-    res.status(422).json({ message: "Record exist for selected date" });
+    res.json({ message: "Record exist for selected date" });
   } else {
     const response = await FoodTransaction.create({
       email: email,
@@ -169,7 +169,7 @@ export const deleteFoodData: RequestHandler = async (req, res) => {
   if (res1) {
     res.json({ message: "Deleted Sucessfully! " });
   } else {
-    res.status(422).json({ message: "Record exist for selected date" });
+    res.json({ message: "Record does not exist for selected date" });
   }
 };
 
