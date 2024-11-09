@@ -30,7 +30,7 @@ export const resendVerificationLink: RequestHandler = async (req, res) => {
 
     await mail.sendVerification(user.email, link);
 
-    return res.json({ message: "Please check your inbox" });
+    return res.json({ message: "ChkInbox" });
   }
 };
 
@@ -57,7 +57,7 @@ export const createNewUser: RequestHandler = async (req, res) => {
 
   await mail.sendVerification(users.email, link);
 
-  return res.json({ message: "Please check your inbox" });
+  return res.json({ message: "ChkInbox" });
 };
 ////////////////////////////////////////////////////////////////////
 export const verifyEmail: RequestHandler = async (req, res) => {
@@ -77,7 +77,7 @@ export const verifyEmail: RequestHandler = async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 export const signIn: RequestHandler = async (req, res) => {
   const { email, password } = req.body;
-
+  //await User.sync({ alter: true });
   const user1 = await User.findOne({
     where: { email: email, isVerified: false },
   });
@@ -114,6 +114,8 @@ export const signIn: RequestHandler = async (req, res) => {
 
   const isMatched = await user.comparePassword(password);
   if (!isMatched) return sendErrorRes(res, "Email/Password mismatch", 403);
+
+  // console.log("defaultlang=>", user.defaultlang);
 
   const payload = { id: user.id };
   const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
@@ -161,7 +163,7 @@ export const generateVerificationLink: RequestHandler = async (req, res) => {
 
   await mail.sendVerification(req.user.email, link);
 
-  res.json({ message: "Please check your inbox" });
+  res.json({ message: "ChkInbox" });
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -231,7 +233,7 @@ export const generateForgetPassLink: RequestHandler = async (req, res) => {
 
   await mail.sendPassResetLink(user.email, passResetLink);
 
-  res.json({ message: "Please check your email" });
+  res.json({ message: "ChkInbox" });
 };
 ////////////////////////////////////////////////////////////////////
 export const grantValid: RequestHandler = async (req, res) => {
@@ -298,7 +300,7 @@ export const saveProfile: RequestHandler = async (req, res) => {
   });
 
   if (newProfile) {
-    res.json({ message: profileExist ? "Profile Updated" : "Profile Saved!" });
+    res.json({ message: profileExist ? "ProfUpdated" : "ProfSaved" });
   } else {
     return sendErrorRes(res, "Profile could not be saved!!", 403);
   }
