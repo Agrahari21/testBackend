@@ -227,7 +227,7 @@ export const addFoodItem: RequestHandler = async (req, res) => {
 
   const email = req.user.email;
 
-  console.log("email", email);
+  //console.log("email", email);
 
   await Dinner.sync({ alter: true });
   await Breakfast.sync({ alter: true });
@@ -265,35 +265,43 @@ export const addFoodItem: RequestHandler = async (req, res) => {
         const response1 = await sequelize.query(
           `INSERT into ${process.env.DB_NAME}.${
             isDinner ? "dinner" : "snack"
-          }master ( itemName,itemValue,userType,foodType ) VALUES (?, ?, ?, ?)`,
+          }master ( itemName,itemValue,userType,foodType, email ) VALUES (?, ?, ?, ?, ?)`,
           {
-            replacements: [itemName, itemName, userType, foodType],
+            replacements: [itemName, itemName, userType, foodType, email],
             type: QueryTypes.INSERT,
           }
         );
         //  console.log("response1", response1);
         if (response1) {
           res.json({
+            message: "NewFoodSaved",
+          });
+          /*  res.json({
             message: `New Food Item Saved Successfully as ${foodCategory} and ${
               isDinner ? "dinner" : "snack"
             } item!`,
-          });
+          }); */
           return;
         } else {
           res.json({
+            message: `${isDinner ? "ErrAddDinner" : "ErrAddSnack"}`,
+          });
+          /*  res.json({
             message: `Error in Adding new food item as ${
               isDinner ? "dinner" : "snack"
             } item!`,
-          });
+          }); */
           return;
         }
       }
       res.json({
-        message: `New Food Item as ${foodCategory} Saved Successfully!`,
+        // message: `New Food Item as ${foodCategory} Saved Successfully!`,
+        message: "NewFoodSaved",
       });
       return;
     } else {
-      res.json({ message: `Error in Adding new food item as ${foodCategory}` });
+      // res.json({ message: `Error in Adding new food item as ${foodCategory}` });
+      res.json({ message: "NewFoodError" });
       return;
     }
   }
