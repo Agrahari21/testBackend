@@ -86,7 +86,7 @@ export const saveFoodData: RequestHandler = async (req, res) => {
   });
 
   if (res1) {
-    res.json({ message: "Record exist for selected date" });
+    res.json({ message: "Duplicate" });
   } else {
     const response = await FoodTransaction.create({
       email: email,
@@ -101,9 +101,9 @@ export const saveFoodData: RequestHandler = async (req, res) => {
     });
 
     if (response) {
-      res.json({ message: "Saved sucessfully! " });
+      res.json({ message: "Saved" });
     } else {
-      res.json({ message: "Error in saving" });
+      res.json({ message: "Error" });
     }
   }
 };
@@ -147,7 +147,7 @@ export const updateFoodData: RequestHandler = async (req, res) => {
         },
       }
     );
-    if (response) res.json({ message: "Updated Successfully!" });
+    if (response) res.json({ message: "Updated" });
     else res.json({ message: "Error in updating!" });
   } else {
     res
@@ -167,7 +167,7 @@ export const deleteFoodData: RequestHandler = async (req, res) => {
   });
 
   if (res1) {
-    res.json({ message: "Deleted Sucessfully! " });
+    res.json({ message: "Deleted" });
   } else {
     res.json({ message: "Record does not exist for selected date" });
   }
@@ -245,7 +245,7 @@ export const addFoodItem: RequestHandler = async (req, res) => {
   // console.log("exist=>", exist);
   if (exist[0]) {
     if (exist[0].count === 1) {
-      res.json({ message: "Item Already exist, use other name" });
+      res.json({ message: "DuplicateItem" });
       return;
     }
   }
