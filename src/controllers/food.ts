@@ -11,13 +11,24 @@ import { v4 as uuidv4 } from "uuid";
 ////////////////////////////////////////////////////////////////////
 export const getBreakfastList: RequestHandler = async (req, res) => {
   //const { email } = req.user;
+  const { isEnglish } = req.params;
 
   await Breakfast.sync({ alter: true });
-
-  const breakfastList = await Breakfast.findAll({
-    attributes: ["itemName", "itemValue"],
-    order: ["itemValue"],
-  });
+  const { Op } = require("sequelize");
+  let breakfastList = null;
+  if (isEnglish === "true") {
+    breakfastList = await Breakfast.findAll({
+      where: { itemName: { [Op.ne]: "---" } },
+      attributes: ["itemName", "itemValue"],
+      order: ["itemName"],
+    });
+  } else {
+    breakfastList = await Breakfast.findAll({
+      where: { itemValue: { [Op.ne]: "---" } },
+      attributes: ["itemName", "itemValue"],
+      order: ["itemValue"],
+    });
+  }
 
   res.send(breakfastList);
 };
@@ -25,13 +36,25 @@ export const getBreakfastList: RequestHandler = async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 export const getLunchList: RequestHandler = async (req, res) => {
   //const { email } = req.user;
+  const { isEnglish } = req.params;
 
   await Lunch.sync({ alter: true });
 
-  const lunchList = await Lunch.findAll({
-    attributes: ["itemName", "itemValue"],
-    order: ["itemValue"],
-  });
+  const { Op } = require("sequelize");
+  let lunchList = null;
+  if (isEnglish === "true") {
+    lunchList = await Lunch.findAll({
+      where: { itemName: { [Op.ne]: "---" } },
+      attributes: ["itemName", "itemValue"],
+      order: ["itemName"],
+    });
+  } else {
+    lunchList = await Lunch.findAll({
+      where: { itemValue: { [Op.ne]: "---" } },
+      attributes: ["itemName", "itemValue"],
+      order: ["itemValue"],
+    });
+  }
 
   res.send(lunchList);
 };
@@ -39,13 +62,25 @@ export const getLunchList: RequestHandler = async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 export const getSnackList: RequestHandler = async (req, res) => {
   //const { email } = req.user;
+  const { isEnglish } = req.params;
 
   await Snack.sync({ alter: true });
-
-  const snackList = await Snack.findAll({
-    attributes: ["itemName", "itemValue"],
-    order: ["itemValue"],
-  });
+  const { Op } = require("sequelize");
+  let snackList = null;
+  //console.log("isEnglish", isEnglish);
+  if (isEnglish === "true") {
+    snackList = await Snack.findAll({
+      where: { itemName: { [Op.notLike]: "---" } },
+      attributes: ["itemName", "itemValue"],
+      order: ["itemName"],
+    });
+  } else {
+    snackList = await Snack.findAll({
+      where: { itemValue: { [Op.notLike]: "---" } },
+      attributes: ["itemName", "itemValue"],
+      order: ["itemValue"],
+    });
+  }
 
   res.send(snackList);
 };
@@ -53,16 +88,30 @@ export const getSnackList: RequestHandler = async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 export const getDinnerList: RequestHandler = async (req, res) => {
   //const { email } = req.user;
+  const { isEnglish } = req.params;
 
   await Dinner.sync({ alter: true });
 
-  const dinnerList = await Dinner.findAll({
-    attributes: ["itemName", "itemValue"],
-    order: ["itemValue"],
-  });
+  const { Op } = require("sequelize");
+  let dinnerList = null;
+  //console.log("isEnglish", isEnglish);
+  if (isEnglish === "true") {
+    dinnerList = await Dinner.findAll({
+      where: { itemName: { [Op.notLike]: "---" } },
+      attributes: ["itemName", "itemValue"],
+      order: ["itemName"],
+    });
+  } else {
+    dinnerList = await Dinner.findAll({
+      where: { itemValue: { [Op.notLike]: "---" } },
+      attributes: ["itemName", "itemValue"],
+      order: ["itemValue"],
+    });
+  }
 
   res.send(dinnerList);
 };
+
 
 ////////////////////////////////////////////////////////////////////
 export const saveFoodData: RequestHandler = async (req, res) => {
