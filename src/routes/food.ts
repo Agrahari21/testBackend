@@ -15,10 +15,10 @@ import { isAuth } from "src/middleware/auth";
 
 const foodRouter = Router();
 
-foodRouter.get("/bReakfast", getBreakfastList);
-foodRouter.get("/lUnch", getLunchList);
-foodRouter.get("/sNack", getSnackList);
-foodRouter.get("/dInner", getDinnerList);
+foodRouter.get("/bReakfast/:isEnglish", getBreakfastList);
+foodRouter.get("/lUnch/:isEnglish", getLunchList);
+foodRouter.get("/sNack/:isEnglish", getSnackList);
+foodRouter.get("/dInner/:isEnglish", getDinnerList);
 foodRouter.post("/saveDayList", saveFoodData);
 foodRouter.patch("/updateDayList", updateFoodData);
 foodRouter.delete("/deleteDayList", deleteFoodData);
