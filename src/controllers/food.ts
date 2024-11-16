@@ -271,25 +271,50 @@ export const getMaxWeekOfYear: RequestHandler = async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 export const addFoodItem: RequestHandler = async (req, res) => {
   //const { email } = req.user;
-  const { itemName, foodCategory, foodType, userType, isDinner, isSnack } =
-    req.body.newFoodInfo;
+  const {
+    itemName,
+    foodCategory,
+    foodType,
+    userType,
+    isDinner,
+    isSnack,
+    isEnglish,
+  } = req.body.newFoodInfo;
 
   const email = req.user.email;
 
   //console.log("email", email);
+  console.log("itemName-", itemName);
+  //let itemValue: string = translate(itemName);
+  /* translate(itemName, { from: "en", to: "hi" })
+    .then((res) => {
+      console.log(res.text);
+      //=> Ik spreek Nederlands!
+      console.log(res.from.text.autoCorrected);
+      //=> tru
+      console.log(res.from.text.value);
+      //=> I [speak] Dutch!
+      console.log(res.from.text.didYouMean);
+      //=> false
+    })
+    .catch((err) => {
+      console.error(err);
+    }); */
+  //console.log("itemValue", res1.text);
 
   await Dinner.sync({ alter: true });
   await Breakfast.sync({ alter: true });
   await Snack.sync({ alter: true });
 
   const { QueryTypes } = require("sequelize");
-
-  const exist = await sequelize.query(
-    `SELECT count(itemName) as count FROM ${process.env.DB_NAME}.${foodCategory}master WHERE itemName= "${itemName}" `,
-    {
-      type: QueryTypes.SELECT,
-    }
-  );
+  let q1 = "";
+  if (isEnglish)
+    q1 = `SELECT count(itemName) as count FROM ${process.env.DB_NAME}.${foodCategory}master WHERE itemName= "${itemName}" `;
+  else
+    q1 = `SELECT count(itemValue) as count FROM ${process.env.DB_NAME}.${foodCategory}master WHERE itemValue= "${itemName}" `;
+  const exist = await sequelize.query(q1, {
+    type: QueryTypes.SELECT,
+  });
 
   // console.log("exist=>", exist);
   if (exist[0]) {
@@ -304,7 +329,13 @@ export const addFoodItem: RequestHandler = async (req, res) => {
     const response = await sequelize.query(
       `INSERT into ${process.env.DB_NAME}.${foodCategory}master ( itemName,itemValue,userType,foodType, email ) VALUES ( ?, ?, ?, ?, ?)`,
       {
-        replacements: [itemName, itemName, userType, foodType, email],
+        replacements: [
+          isEnglish ? itemName : "---",
+          isEnglish ? "---" : itemName,
+          userType,
+          foodType,
+          email,
+        ],
         type: QueryTypes.INSERT,
       }
     );
@@ -316,7 +347,13 @@ export const addFoodItem: RequestHandler = async (req, res) => {
             isDinner ? "dinner" : "snack"
           }master ( itemName,itemValue,userType,foodType, email ) VALUES (?, ?, ?, ?, ?)`,
           {
-            replacements: [itemName, itemName, userType, foodType, email],
+            replacements: [
+              isEnglish ? itemName : "---",
+              isEnglish ? "---" : itemName,
+              userType,
+              foodType,
+              email,
+            ],
             type: QueryTypes.INSERT,
           }
         );
