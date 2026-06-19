@@ -230,7 +230,7 @@ export const generateForgetPassLink: RequestHandler = async (req, res) => {
 
   //send the link
   const passResetLink = `${PASSWORD_RESET_LINK}?id=${user.id}&token=${token}`;
-
+  console.log("html file link-", passResetLink )
   await mail.sendPassResetLink(user.email, passResetLink);
 
   res.json({ message: "ChkInbox" });
